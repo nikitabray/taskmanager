@@ -1,0 +1,34 @@
+version: "3.9"
+   
+services:
+  db:
+    image: postgres:13.3
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - PGDATA=/var/lib/postgresql/data
+      - POSTGRES_DB=taskmanager
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports: 
+      - "5432:5432"
+
+  taskmanager:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - migration
+
+  migration:
+    build: .
+    command: python manage.py migrate
+    volumes:
+      - .:/app
+    links:
+      - db
+    depends_on:
+      - db
