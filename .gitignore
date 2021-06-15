@@ -1,2 +1,4 @@
 .vim/
 .python-version
+data/
+.DS_store
