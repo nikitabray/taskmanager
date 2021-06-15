@@ -24,6 +24,14 @@ services:
       - migration
     restart: always
 
+  makemigrations:
+    build: .
+    command: python manage.py makemigrations
+    volumes: 
+      - .:/app
+    depends_on: 
+      - db
+
   migration:
     build: .
     command: python manage.py migrate
@@ -32,4 +40,4 @@ services:
     links:
       - db
     depends_on:
-      - db
+      - makemigrations
