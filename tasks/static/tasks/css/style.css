@@ -1,0 +1,36 @@
+.card {
+    margin: 6%;
+    padding: 3%;
+    text-align: center;
+    color: #fff;
+    font-size: 22px;
+}
+
+.categories {
+    text-align: center;
+    border: 2px solid #fff
+}
+
+.add-category {
+    text-align: center;
+}
+
+.top-paginator {
+    padding-top: 2%;
+}
+
+.create-form {
+    padding: 4%;
+}
+
+a:visited {
+    color: blanchedalmond;
+}
+
+a:link {
+    color: blanchedalmond;
+}
+
+a:hover {
+    color: #cc9c5e
+}

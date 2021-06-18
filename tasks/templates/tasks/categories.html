@@ -1,0 +1,11 @@
+{% extends 'tasks/base.html' %}
+{% block title %}Категории{% endblock title %} 
+{% block content %}
+
+<div class="categories bg-dark">
+<a href="" class="add-category">Добавить категорию</a>
+{% for object in object_list %}
+<div class="text-white">{{ object.title }}</div>
+{% endfor %}
+</div>
+{% endblock content %}

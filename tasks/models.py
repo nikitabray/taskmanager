@@ -1,21 +1,19 @@
 from django.db import models
-from django.db.models.deletion import SET_DEFAULT
+from django.db.models.deletion import SET_NULL
 from simple_history.models import HistoricalRecords
-
-class Tag(models.Model):
-    title = models.CharField(max_length=30)
-
-    class Meta:
-        verbose_name = 'Tag',
-        verbose_name_plural = 'Tags'
+from taggit.managers import TaggableManager
 
 
 class Category(models.Model):
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=30, unique=True)
+    slug = models.SlugField(max_length=40)
 
     class Meta:
         verbose_name = 'Category',
         verbose_name_plural = 'Categories'
+
+    def __str__(self):
+        return self.title
 
 
 class Task(models.Model):
@@ -29,7 +27,7 @@ class Task(models.Model):
     )
     deadline = models.DateTimeField(
         blank=True,
-        null=True
+        null=True,
     )
     completed = models.BooleanField(
         default=False
@@ -38,12 +36,11 @@ class Task(models.Model):
         Category,
         blank=True,
         null=True,
-        default='No category',
-        on_delete=models.SET_DEFAULT
+        on_delete=SET_NULL
     )
-    tags = models.ManyToManyField(
-        Tag,
-        blank=True,
+    tags = TaggableManager(
+        help_text='Список тегов, разделенных запятыми',
+        blank=True
     )
     history = HistoricalRecords()
 
@@ -51,7 +48,5 @@ class Task(models.Model):
         verbose_name = 'Task',
         verbose_name_plural = 'Tasks'
 
-    
-  
-  
-# Create your models here.
+    def __str__(self):
+        return self.title
