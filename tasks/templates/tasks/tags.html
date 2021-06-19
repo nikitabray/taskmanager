@@ -1,0 +1,14 @@
+{% extends 'tasks/base.html' %}
+{% block title %}Тэги{% endblock title %}
+{% block content %}
+
+<div class="categories bg-dark">
+
+    <div class="categories-list">
+        {% for object in object_list %}
+        <a href="{% url 'tag related tasks' object.slug %}"
+                class="display-4">{{ object.name }}, </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

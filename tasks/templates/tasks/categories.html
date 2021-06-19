@@ -1,11 +1,17 @@
 {% extends 'tasks/base.html' %}
-{% block title %}Категории{% endblock title %} 
+{% block title %}Категории{% endblock title %}
 {% block content %}
 
 <div class="categories bg-dark">
-<a href="" class="add-category">Добавить категорию</a>
-{% for object in object_list %}
-<div class="text-white">{{ object.title }}</div>
-{% endfor %}
+
+    <div class="add-category-text">
+    <a href="{% url 'create category' %}" class="text-info display-3">Создать категорию</a>
+    </div>
+    <div class="categories-list">
+        {% for object in object_list %}
+        <div class="text-white"><a href="{% url 'category related tasks' object.slug %}"
+                class="display-4">{{ object.title }}</a></div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock content %}

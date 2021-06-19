@@ -1,0 +1,49 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Ваши задачи{% endblock title %}
+
+{% block content %}
+<div class="top-paginator">
+  <nav>
+    <ul class="pagination justify-content-center">
+      <li class="page-item"><a class="page-link bg-dark {% if has_prev is True %}"
+          href="/?page={{ data.previous_page_number }}" {% else %}btn disabled" href="#" {% endif %}>Предыдущая</a></li>
+      <li class="page-item"><a class="page-link bg-dark btn disabled" href="#">{{ data.number}}</a></li>
+      <li class="page-item"><a class="page-link bg-dark {% if has_next is True %}"
+          href="/?page={{ data.next_page_number }}" {% else %}btn disabled" href="#" {% endif %}>Следующая</a></li>
+    </ul>
+  </nav>
+</div>
+{% for task in data %}
+<div class="card bg-dark">
+  <div class="card-main">
+    <p class="display-4 text-info">{{ task.title }}</p>
+    <p>{{ task.description }}</p>
+    <p><span class="font-italic text-secondary">Создана:</span> {{ task.created_at }}</p>
+    <p><span class="font-italic text-secondary">Изменено:</span> {{ task.modified_at }}</p>
+    <p><span class="font-italic text-secondary">Крайник срок выполнения:</span> {{ task.deadline }}</p>
+    <p><span class="font-italic text-secondary">Статус выполнения:</span> {{ task.completed }}</p>
+    <p><span class="font-italic text-secondary">Категория:</span> {% if task.category %}<a
+        href="{% url 'category related tasks' task.category_slug %}">{% endif %}{{ task.category_title }}</a></p>
+    <p><span class="font-italic text-secondary">Список тэгов:</span>
+      {% if task.tags.all %}{% for tag in task.tags.all|join:', ' %}{{tag}}{% endfor %}{% else %}Отсутствуют{% endif %}
+    </p>
+  </div>
+  <div class="card-edit">
+    <a class="card-edit-text" href={% url 'update task' task.id %}>Редактировать задачу</a>
+    <a class="card-edit-text" href="{% url 'history of the task' task.id %}">Посмотреть историю изменений</a>
+    <a class="card-edit-text" href={% url 'delete task' task.id %}>Удалить задачу</a>
+</div>
+</div>
+{% endfor %}
+<nav>
+  <nav>
+    <ul class="pagination justify-content-center">
+      <li class="page-item"><a class="page-link bg-dark {% if has_prev is True %}"
+          href="/?page={{ data.previous_page_number }}" {% else %}btn disabled" href="#" {% endif %}>Предыдущая</a></li>
+      <li class="page-item"><a class="page-link bg-dark btn disabled" href="#">{{ data.number}}</a></li>
+      <li class="page-item"><a class="page-link bg-dark {% if has_next is True %}"
+          href="/?page={{ data.next_page_number }}" {% else %}btn disabled" href="#" {% endif %}>Следующая</a></li>
+    </ul>
+  </nav>
+  {% endblock content %}

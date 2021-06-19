@@ -6,13 +6,33 @@
     font-size: 22px;
 }
 
-.categories {
-    text-align: center;
-    border: 2px solid #fff
+.card-main {
+    border-bottom: 3px solid #fff;
 }
 
-.add-category {
+.card-edit {
+    padding-top: 1%;
+}
+
+.card-edit-text {
+    padding: 1%;
+}
+
+.change-list-text {
+    padding-top: 4%
+}
+.categories {
     text-align: center;
+    padding: 5%;
+}
+
+.categories-list{
+    padding-top: 2%;
+    border-top: 3px solid #fff;
+}
+
+.add-category-text {
+    padding-bottom: 2%;
 }
 
 .top-paginator {

@@ -4,11 +4,13 @@
 
 
 {% block content %}
-<p>Вы дейсвительно хотите удалить задачу «{{ item.title }}»?</p>
+<div class="categories bg-dark">
+    <p class="text-center text-white">Вы дейсвительно хотите удалить задачу «{{ item.title }}»?</p>
 
-<form action="{% url 'delete task' item.id %}" method="post">
-{% csrf_token %}
-    <a href={% url 'list of all tasks' %}>Отмена</a>
-    <input class="btn btn-primary" type="submit" value="Удалить">
-</form>
+    <form action="{% url 'delete task' item.id %}" method="post" class="text-center">
+        {% csrf_token %}
+        <a href={% url 'list of all tasks' %}>Отмена</a>
+        <input class="btn btn-danger" type="submit" value="Удалить">
+    </form>
+</div>
 {% endblock content %}

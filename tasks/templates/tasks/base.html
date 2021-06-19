@@ -13,7 +13,7 @@
     <link rel="stylesheet" href={% static "tasks/css/style.css" %}>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-dark">
-        <a class="navbar-brand text-primary" href="{% url 'list of all tasks' %}">TODO</a>
+        <a class="navbar-brand text-info" href="{% url 'list of all tasks' %}">TODO</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -25,13 +25,13 @@
                             class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#">Задачи</a>
+                    <a class="nav-link text-white" href="{% url 'list of all tasks' %}">Задачи</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#">Категории</a>
+                    <a class="nav-link text-white" href="{% url 'list of categories' %}">Категории</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#">Тэги</a>
+                    <a class="nav-link text-white" href="{% url 'list of tags' %}">Тэги</a>
                 </li>
             </ul>
         </div>

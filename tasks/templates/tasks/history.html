@@ -1,0 +1,22 @@
+{% extends 'tasks/base.html' %}
+{% block title %}Категории{% endblock title %}
+{% block content %}
+
+<div class="change-list-text">
+    <p class="text-center display-4">Список изменений</p>
+</div>
+{% for history_object in data %}
+<div class="card bg-dark">
+    <p><span class="font-italic text-info text-info">Изменено:</span> {{ history_object.modified_at }}</p>
+    <h2>{{ history_object.title }}</h2>
+    <p>{{ history_object.description }}</p>
+    <p><span class="font-italic text-info">Создана:</span> {{ history_object.created_at }}</p>
+    <p><span class="font-italic text-info">Крайник срок выполнения:</span> {{ history_object.deadline }}</p>
+    <p><span class="font-italic text-info">Статус выполнения:</span> {{ history_object.completed }}</p>
+    <p><span class="font-italic text-info">Категория:</span> {% if history_object.category %}<a
+            href="{% url 'category related tasks' history_object.category_slug %}">{% endif %}{{ history_object.category_title }}</a>
+    </p>
+    <div>{{ history_object.history }}</div>
+</div>
+{% endfor %}
+{% endblock content %}
