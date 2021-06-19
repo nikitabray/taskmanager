@@ -3,6 +3,7 @@
 data/
 .DS_store
 .vscode/
+*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

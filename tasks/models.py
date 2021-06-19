@@ -60,6 +60,14 @@ class Task(models.Model):
     )
     history = HistoricalRecords()
 
+    def save_without_historical_record(self, *args, **kwargs):
+        self.skip_history_when_saving = True
+        try:
+            ret = self.save(*args, **kwargs)
+        finally:
+            del self.skip_history_when_saving
+        return ret
+
     class Meta:
         verbose_name = ("Задача",)
         verbose_name_plural = "Задачи"

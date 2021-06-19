@@ -1,10 +1,55 @@
 import csv
-from .models import Task, Category
-from collections import OrderedDict
-from .serializers import DumpTasksDataSerializer, ReadTasksDataSerializer
 import re
 import random
 import string
+from typing import DefaultDict
+from lorem_text import lorem
+from collections import OrderedDict
+
+from .models import Task, Category
+from .serializers import DumpTasksDataSerializer, ReadTasksDataSerializer
+
+import time
+
+class TaskManager:
+    @classmethod
+    def create_from_data(cls, data: dict, category: str, tags: str):
+        ser = ReadTasksDataSerializer(data=data)
+        ser.is_valid(raise_exception=True)
+        if not ser.validated_data:
+            return None
+        instance = ser.create(ser.validated_data)
+        instance = cls.add_category_to_task(instance, category)
+        instance = cls.add_tags_to_task(instance, tags)
+        return instance
+
+    @classmethod
+    def add_category_to_task(self, task_instance, category_title: str):
+        if not category_title:
+            return task_instance
+
+        category = Category.objects.filter(title=category_title)
+        if category:
+            task_instance.category = category[0]
+        else:
+            Category(title=category_title).save()
+            task_instance.category = Category.objects.get(title=category_title)
+        return task_instance
+
+    @classmethod
+    def add_tags_to_task(self, task_instance, tags: str):
+        if not tags:
+            return task_instance
+
+        pattern = r"([^,]*)"
+        p = re.compile(pattern)
+        s = p.findall(tags)
+        tags = []
+        for match in s:
+            if match and match not in  [" " * x for x in range(3)]:
+                tags.append(match.strip())
+        task_instance.tags.add(*tags)
+        return task_instance
 
 
 class DumpData:
@@ -47,46 +92,88 @@ class DumpData:
         with open("tasks.csv", "r") as read_obj:
             csv_reader = csv.DictReader(read_obj)
             for row in csv_reader:
-                ser = ReadTasksDataSerializer(data=row)
-                ser.is_valid()
-                instance = ser.create(ser.validated_data)
-                tags = self.get_tags(row["tags"])
-                instance.tags.add(*tags)
-                if row["category"]:
-                    return self.add_category_to_task(instance, row["category"])
-                else:
-                    return instance.save()
+                category = row["category"]
+                tags = row["tags"]
+                TaskManager.create_from_data(row, category, tags).save_without_historical_record()
         return "Success"
-
-    def add_category_to_task(self, task_instance, category_title: str):
-        category = Category.objects.filter(title=category_title)
-        if category:
-            task_instance.category = category[0]
-        else:
-            Category(title=category_title).save()
-            task_instance.category = Category.objects.get(title=category_title)
-        task_instance.save()
-
-    def get_tags(self, tags: str) -> list:
-        pattern = r"([^,]*)"
-        p = re.compile(pattern)
-        s = p.findall(tags)
-        res = []
-        for match in s:
-            if match and match != ' ':
-                res.append(match.strip())
-        return res
 
 
 class DataGenerator:
+    @classmethod
+    def get_random_string(
+        cls, chars=string.ascii_letters + string.digits, size=10
+    ) -> str:
+        return "".join(random.choice(chars) for _ in range(size))
 
     @classmethod
-    def get_random_string(cls, chars = string.ascii_letters + string.digits, size=10):
-        
-        chars = string.ascii_letters + string.digits
-        return ''.join(random.choice(chars) for _ in range(size))
+    def generate_title(cls) -> str:
+        return lorem.words(random.randint(1, 5))
 
     @classmethod
-    def generate_categories(cls, array_size=12):
-        pass
+    def generate_description(cls) -> str:
+        description = ""
+        if random.randint(0, 1):
+            description = lorem.paragraph()
+        return description
 
+    @classmethod
+    def generate_deadline(cls) -> str:
+        deadline = ""
+        if random.randint(0, 1):
+            d, m, y = (
+                str(random.randint(1, 28)),
+                str(random.randint(1, 12)),
+                str(random.randint(21, 22)),
+            )
+            hour, minute = str(random.randint(0, 23)), str(random.randint(0, 59))
+            deadline = f"{d}/{m}/{y} {hour}:{minute}"
+        return deadline
+
+    @classmethod
+    def generate_completed(cls) -> bool:
+        return random.choice([True, False])
+
+    @classmethod
+    def generate_tags(cls) -> str:
+        tags = []
+        for _ in range(random.randint(0, 10)):
+            title_len = random.randint(3, 10)
+            tags.append(
+                "tag_"
+                + cls.get_random_string(chars=string.ascii_lowercase, size=title_len)
+            )
+        return ", ".join(tags) + ", "
+
+    @classmethod
+    def generate_categories(cls, list_size=10) -> list:
+        list_of_categories = []
+        chars = string.ascii_uppercase
+        for _ in range(list_size):
+            title_len = random.randint(1, 12)
+            list_of_categories.append(
+                "category_" + cls.get_random_string(chars=chars, size=title_len)
+            )
+        return list_of_categories + [""]
+
+    @classmethod
+    def generate_task_data(cls) -> str:
+
+        data = {
+            "title": cls.generate_title(),
+            "description": cls.generate_description(),
+            "deadline": cls.generate_deadline(),
+            "completed": cls.generate_completed(),
+        }
+
+        return data
+
+    @classmethod
+    def generate(cls, count=100):
+        list_of_categories = cls.generate_categories(max(1, int(count / 10)))
+        for _ in range(count):
+            data = cls.generate_task_data()
+            tags = cls.generate_tags()
+            category = random.choice(list_of_categories)
+            obj = TaskManager.create_from_data(data, category, tags)
+            if obj:
+                obj.save_without_historical_record()
