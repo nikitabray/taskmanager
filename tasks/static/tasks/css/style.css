@@ -1,8 +1,11 @@
-a.delete {
+a.delete, a.delete:visited {
     padding-top: 2%;
     padding-right: 2%;
     color: brown !important;
-    font-size: 20px !important; 
+}
+
+.navbar-right li a {
+    text-align: right;
 }
 
 .card {
