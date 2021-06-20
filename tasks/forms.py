@@ -1,7 +1,22 @@
 from django import forms
-from django.db import models
-from django.forms import widgets, DateTimeField
+from django.forms import DateTimeField
+from django.forms.forms import Form
 from .models import Task, Category
+
+
+class GenerateForm(forms.Form):
+
+    count = forms.IntegerField(max_value=10000, label="Количество задач")
+
+
+class SaveToCSV(forms.Form):
+
+    filename = forms.CharField(label="Название файла")
+
+
+class LoadFromCSV(forms.Form):
+
+    file = forms.FileField()
 
 
 class TaskForm(forms.ModelForm):
@@ -11,7 +26,7 @@ class TaskForm(forms.ModelForm):
         widget=forms.widgets.DateTimeInput(
             attrs={"class": "form-control", "type": "datetime"},
         ),
-        label='Крайний срок выполнения. Формат: «ДД/ММ/ГГ ЧЧ:ММ»',
+        label="Крайний срок выполнения. Формат: «ДД/ММ/ГГ ЧЧ:ММ»",
         required=False,
     )
 

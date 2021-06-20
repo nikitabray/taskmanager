@@ -1,13 +1,12 @@
 {% extends 'tasks/base.html' %}
 {% load static %}
-{% block title %}Удалить задачу {{ item.title }}{% endblock %}
+{% block title %}Удаление{% endblock %}
 
 
 {% block content %}
 <div class="categories bg-dark">
-    <p class="text-center text-white">Вы дейсвительно хотите удалить задачу «{{ item.title }}»?</p>
-
-    <form action="{% url 'delete task' item.id %}" method="post" class="text-center">
+    <p class="text-center text-white">Вы дейсвительно хотите удалить {% block delete-text %}{% endblock delete-text %}?</p>
+    <form action="" method="post" class="text-center">
         {% csrf_token %}
         <a href={% url 'list of all tasks' %}>Отмена</a>
         <input class="btn btn-danger" type="submit" value="Удалить">

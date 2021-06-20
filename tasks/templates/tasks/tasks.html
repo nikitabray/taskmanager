@@ -1,8 +1,9 @@
 {% extends 'tasks/base.html' %}
 
-{% block title %}Ваши задачи{% endblock title %}
+{% block title %}Задачи{% endblock title %}
 
 {% block content %}
+<div class="text-right"><a class="delete" href="{% url 'delete all tasks' %}"> Удалить все задачи</a></div>
 <div class="top-paginator">
   <nav>
     <ul class="pagination justify-content-center">
@@ -33,7 +34,7 @@
     <a class="card-edit-text" href={% url 'update task' task.id %}>Редактировать задачу</a>
     <a class="card-edit-text" href="{% url 'history of the task' task.id %}">Посмотреть историю изменений</a>
     <a class="card-edit-text" href={% url 'delete task' task.id %}>Удалить задачу</a>
-</div>
+  </div>
 </div>
 {% endfor %}
 <nav>

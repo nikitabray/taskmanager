@@ -5,12 +5,12 @@
 <div class="categories bg-dark">
 
     <div class="add-category-text">
-    <a href="{% url 'create category' %}" class="text-info display-3">Создать категорию</a>
+        <a href="{% url 'create category' %}" class="text-info display-4">Создать категорию<br></a>
+        <a class="delete" href="{% url 'delete all categories' %}">Удалить все категории</a>
     </div>
     <div class="categories-list">
         {% for object in object_list %}
-        <div class="text-white"><a href="{% url 'category related tasks' object.slug %}"
-                class="display-4">{{ object.title }}</a></div>
+        <div class="text-white"><a href="{% url 'category related tasks' object.slug %}">{{ object.title }}</a></div>
         {% endfor %}
     </div>
 </div>

@@ -2,12 +2,12 @@
 {% block title %}Тэги{% endblock title %}
 {% block content %}
 
+<div class="bg-dark"><p class="text-right"><a class="delete" href="{% url 'delete all tags' %}">Удалить все тэги</a></p></div>
 <div class="categories bg-dark">
-
     <div class="categories-list">
         {% for object in object_list %}
         <a href="{% url 'tag related tasks' object.slug %}"
-                class="display-4">{{ object.name }}, </a>
+                class="">{{ object.name }}, </a>
         {% endfor %}
     </div>
 </div>

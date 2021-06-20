@@ -1,15 +1,13 @@
+from collections import OrderedDict
 import csv
 import re
 import random
 import string
-from typing import DefaultDict
+
 from lorem_text import lorem
-from collections import OrderedDict
 
 from .models import Task, Category
 from .serializers import DumpTasksDataSerializer, ReadTasksDataSerializer
-
-import time
 
 class TaskManager:
     @classmethod
@@ -46,7 +44,7 @@ class TaskManager:
         s = p.findall(tags)
         tags = []
         for match in s:
-            if match and match not in  [" " * x for x in range(3)]:
+            if match and match not in [" " * x for x in range(3)]:
                 tags.append(match.strip())
         task_instance.tags.add(*tags)
         return task_instance
@@ -59,8 +57,10 @@ class DumpData:
         ser = DumpTasksDataSerializer(instance=qs, many=True)
         return ser.data
 
-    def save_to_csv(self) -> bool:
-        with open("tasks.csv", "w", newline="") as csvfile:
+    def save_to_csv(self, filename: str) -> bool:
+        if not filename.endswith(".csv"):
+            filename += ".csv"
+        with open(f"./csv/{filename}", "w", newline="") as csvfile:
             fieldnames = [
                 "title",
                 "description",
@@ -88,14 +88,15 @@ class DumpData:
                     }
                 )
 
-    def load_from_csv(self):
-        with open("tasks.csv", "r") as read_obj:
-            csv_reader = csv.DictReader(read_obj)
-            for row in csv_reader:
-                category = row["category"]
-                tags = row["tags"]
-                TaskManager.create_from_data(row, category, tags).save_without_historical_record()
-        return "Success"
+    def load_from_csv(self, read_obj) -> bool:
+        csv_reader = csv.DictReader(read_obj)
+        for row in csv_reader:
+            category = row["category"]
+            tags = row["tags"]
+            TaskManager.create_from_data(
+                row, category, tags
+            ).save_without_historical_record()
+        return True
 
 
 class DataGenerator:
@@ -126,7 +127,7 @@ class DataGenerator:
                 str(random.randint(21, 22)),
             )
             hour, minute = str(random.randint(0, 23)), str(random.randint(0, 59))
-            deadline = f"{d}/{m}/{y} {hour}:{minute}"
+            deadline = f"20{y}-{m}-{d} {hour}:{minute}:00"
         return deadline
 
     @classmethod
@@ -134,15 +135,15 @@ class DataGenerator:
         return random.choice([True, False])
 
     @classmethod
-    def generate_tags(cls) -> str:
+    def generate_tags(cls, list_size=10) -> str:
         tags = []
-        for _ in range(random.randint(0, 10)):
+        for _ in range(list_size):
             title_len = random.randint(3, 10)
             tags.append(
                 "tag_"
                 + cls.get_random_string(chars=string.ascii_lowercase, size=title_len)
             )
-        return ", ".join(tags) + ", "
+        return tags
 
     @classmethod
     def generate_categories(cls, list_size=10) -> list:
@@ -168,12 +169,22 @@ class DataGenerator:
         return data
 
     @classmethod
-    def generate(cls, count=100):
+    def generate(cls, count=100) -> None:
         list_of_categories = cls.generate_categories(max(1, int(count / 10)))
+        list_of_tags = cls.generate_tags(max(3, int(count / 4)))
         for _ in range(count):
             data = cls.generate_task_data()
-            tags = cls.generate_tags()
+            tags = (
+                ", ".join(
+                    [
+                        random.choice(list_of_tags)
+                        for _ in range(random.randint(0, 7))
+                    ]
+                )
+                + ", "
+            )
             category = random.choice(list_of_categories)
             obj = TaskManager.create_from_data(data, category, tags)
             if obj:
                 obj.save_without_historical_record()
+                print(f"Создана задача с именем {obj}")

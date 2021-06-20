@@ -1,14 +1,14 @@
 {% extends 'tasks/base.html' %}
 {% load static %}
-{% block title %}{{ title }}{% endblock %}
+{% block title %}Создать категорию{% endblock %}
 
 
 {% block content %}
 <div class="col-md-6 create-form">
-<form action="" method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Создать категорию">
-</form>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Создать категорию">
+    </form>
 </div>
 {% endblock content %}

@@ -1,11 +1,9 @@
-from django.db.models import fields
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound
-from rest_framework.fields import SerializerMethodField
-from .models import Category, Task
+
 from datetime import datetime
-from taggit_serializer.serializers import TaggitSerializer
-from collections import OrderedDict
+
+from .models import Category, Task
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -98,9 +96,9 @@ class DetailTaskSerializer(CreateTaskSerializer):
         else:
             return None
 
-   
+
 class ReadTasksDataSerializer(serializers.ModelSerializer):
-    
+
     deadline = serializers.DateTimeField(required=False, allow_null=True)
 
     class Meta:
@@ -113,11 +111,12 @@ class ReadTasksDataSerializer(serializers.ModelSerializer):
             "deadline",
             "completed",
         ]
-    
+
     def to_internal_value(self, data):
         if data.get("deadline") == "":
             data["deadline"] = None
         return super().to_internal_value(data)
+
 
 class DumpTasksDataSerializer(serializers.ModelSerializer):
 
@@ -126,14 +125,13 @@ class DumpTasksDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ReadTasksDataSerializer.Meta.fields + ['tags', 'category']
+        fields = ReadTasksDataSerializer.Meta.fields + ["tags", "category"]
 
     def get_tags(self, obj):
         if obj.tags:
-            tags = ''
+            tags = ""
             for tag in obj.tags.all():
-                tags += tag.name + ', '
+                tags += tag.name + ", "
             return tags
         else:
             return []
-

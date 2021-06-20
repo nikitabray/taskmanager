@@ -1,9 +1,10 @@
 from django.db import models
-from slugify import slugify as py_slugify
 from django.db.models.deletion import SET_NULL
+
+from slugify import slugify as py_slugify
 from simple_history.models import HistoricalRecords
-from taggit.managers import TaggableManager
 from taggit.models import Tag, TaggedItem
+from taggit.managers import TaggableManager
 
 
 class RuTag(Tag):
@@ -12,7 +13,6 @@ class RuTag(Tag):
 
     def slugify(self, tag, i=None):
         return py_slugify(tag)
-        return super().slugify(tag, i=i)
 
 
 class RuTaggedItem(TaggedItem):
@@ -44,11 +44,7 @@ class Task(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(
-        auto_now=True, 
-        blank=True, 
-        null=True
-    )
+    modified_at = models.DateTimeField(auto_now=True, blank=True, null=True)
     deadline = models.DateTimeField(
         blank=True,
         null=True,
